@@ -1,7 +1,7 @@
 // options3.rs
 // Execute `rustlings hint options3` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
+// 所有权转移了, 应该使用 &p
 
 struct Point {
     x: i32,
@@ -9,7 +9,8 @@ struct Point {
 }
 
 fn main() {
-    let y: Option<Point> = Some(Point { x: 100, y: 200 });
+    let p = Point { x: 100, y: 200 };
+    let y: Option<&Point> = Some(&p);
 
     match y {
         Some(p) => println!("Co-ordinates are {},{} ", p.x, p.y),
