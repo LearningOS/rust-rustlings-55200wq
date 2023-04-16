@@ -45,41 +45,19 @@ enum ParsePersonError {
 impl FromStr for Person {
     type Err = ParsePersonError;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
-        match s.len() {
-            0 => {
-                Err(ParsePersonError::Empty)
-            },
-            _ => {
-                if let Some(n) = s.find(',') {
-                    let e = s[n + 1 ..].find(',');
-                    match e {
-                        Some(_) => {
-                            Err(ParsePersonError::BadLen)
-                        },
-                        _  => {
-                            let age = s[n+1 ..].parse::<usize>();
-                            match age {
-                                Err(ret) => {
-                                    Err(ParsePersonError::ParseInt(ret))
-
-                                },
-                                Ok(ret) => {
-                                    if n == 0 {
-                                        Err(ParsePersonError::NoName)
-                                    } else {
-                                        Ok(Person {
-                                            name : s[0 .. n].to_string(),
-                                            age  : age.unwrap()
-                                        })
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-
+        if s.len() == 0 {
+            Err(Self::Err::Empty)
+        } else {
+            let parts: Vec<&str> = s.split(',').collect();
+            if parts.len() != 2 {
+                Err(Self::Err::BadLen)
+            } else {
+                let (name, age) = (parts[0], parts[1]);
+                if name.len() == 0 {
+                    Err(Self::Err::NoName)
                 } else {
-                    Err(ParsePersonError::BadLen)
+                    let age = age.parse::<usize>().map_err(|e| Self::Err::ParseInt(e))?;
+                    Ok(Person { name: name.to_string(), age })
                 }
             }
         }
