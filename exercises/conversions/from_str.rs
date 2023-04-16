@@ -65,10 +65,10 @@ impl FromStr for Person {
     }
 }
 
-fn main() {
-    let p = "Mark,20".parse::<Person>().unwrap();
-    println!("{:?}", p);
-}
+// fn main() {
+//     let p = "Mark,20".parse::<Person>().unwrap();
+//     println!("{:?}", p);
+// }
 
 #[cfg(test)]
 mod tests {
