@@ -7,7 +7,6 @@
 // Execute `rustlings hint from_str` or use the `hint` watch subcommand for a hint.
 
 use std::num::ParseIntError;
-use core::num::IntErrorKind::Zero;
 use std::str::FromStr;
 
 #[derive(Debug, PartialEq)]
@@ -28,6 +27,7 @@ enum ParsePersonError {
     // Wrapped error from parse::<usize>()
     ParseInt(ParseIntError),
 }
+
 
 // Steps:
 // 1. If the length of the provided string is 0, an error should be returned
