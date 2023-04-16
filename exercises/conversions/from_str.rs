@@ -7,6 +7,7 @@
 // Execute `rustlings hint from_str` or use the `hint` watch subcommand for a hint.
 
 use std::num::ParseIntError;
+use core::num::IntErrorKind::Zero;
 use std::str::FromStr;
 
 #[derive(Debug, PartialEq)]
@@ -28,8 +29,6 @@ enum ParsePersonError {
     ParseInt(ParseIntError),
 }
 
-// I AM NOT DONE
-
 // Steps:
 // 1. If the length of the provided string is 0, an error should be returned
 // 2. Split the given string on the commas present in it
@@ -46,6 +45,44 @@ enum ParsePersonError {
 impl FromStr for Person {
     type Err = ParsePersonError;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        match s.len() {
+            0 => {
+                Err(ParsePersonError::Empty)
+            },
+            _ => {
+                if let Some(n) = s.find(',') {
+                    let e = s[n + 1 ..].find(',');
+                    match e {
+                        Some(_) => {
+                            Err(ParsePersonError::BadLen)
+                        },
+                        _  => {
+                            let age = s[n+1 ..].parse::<usize>();
+                            match age {
+                                Err(ret) => {
+                                    Err(ParsePersonError::ParseInt(ret))
+
+                                },
+                                Ok(ret) => {
+                                    if n == 0 {
+                                        Err(ParsePersonError::NoName)
+                                    } else {
+                                        Ok(Person {
+                                            name : s[0 .. n].to_string(),
+                                            age  : age.unwrap()
+                                        })
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
+                } else {
+                    Err(ParsePersonError::BadLen)
+                }
+            }
+        }
     }
 }
 
