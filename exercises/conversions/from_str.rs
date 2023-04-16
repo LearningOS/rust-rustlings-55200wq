@@ -1,3 +1,4 @@
+
 // from_str.rs
 // This is similar to from_into.rs, but this time we'll implement `FromStr`
 // and return errors instead of falling back to a default value.
@@ -29,6 +30,7 @@ enum ParsePersonError {
 }
 
 
+
 // Steps:
 // 1. If the length of the provided string is 0, an error should be returned
 // 2. Split the given string on the commas present in it
@@ -46,20 +48,19 @@ impl FromStr for Person {
     type Err = ParsePersonError;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
         if s.len() == 0 {
-            Err(Self::Err::Empty)
+            Err(ParsePersonError::Empty)
         } else {
-            let parts: Vec<&str> = s.split(',').collect();
-            if parts.len() != 2 {
-                Err(Self::Err::BadLen)
-            } else {
-                let (name, age) = (parts[0], parts[1]);
-                if name.len() == 0 {
-                    Err(Self::Err::NoName)
-                } else {
-                    let age = age.parse::<usize>().map_err(|e| Self::Err::ParseInt(e))?;
-                    Ok(Person { name: name.to_string(), age })
-                }
-            }
+        let s = s.split(",").map(|x| x.into()).collect::<Vec<String>>();
+        if s.len()!=2{
+            return Err(ParsePersonError::BadLen)
+        } else if s[0]==""{
+            return Err(ParsePersonError::NoName)
+        }
+        let number = s[1].parse();
+        if let Err(x) = number{
+            return Err(ParsePersonError::ParseInt(x))
+        }
+        Ok(Person{name:s[0].clone(),age:number.unwrap()})
         }
     }
 }
